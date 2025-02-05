@@ -4,6 +4,7 @@ import Navbar from "@/components/Navbar";
 import CardDemo from "@/components/cards-demo-1";
 import Card from "@/components/Card";
 import Hero from "@/components/Hero";
+import Footer from "@/components/Footer";
 
 
 
@@ -14,6 +15,7 @@ export default function Home() {
     {/* <SplashCursor /> */}
     <Navbar/>
     <Hero/>
+    <Footer/>
     </div>
   );
 }
