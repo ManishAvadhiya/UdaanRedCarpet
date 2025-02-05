@@ -7,12 +7,14 @@ import Hero from "@/components/Hero";
 import Footer from "@/components/Footer";
 
 
+import { Button } from "@/components/ui/button";
+
 
 
 export default function Home() {
   return (
     <div className="flex flex-col items-center  min-h-screen ">
-    {/* <SplashCursor /> */}
+    <SplashCursor />
     <Navbar/>
     <Hero/>
     <Footer/>

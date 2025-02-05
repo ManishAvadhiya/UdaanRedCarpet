@@ -3,7 +3,6 @@
 import * as React from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Home, Plus, MoreVertical, Search } from "lucide-react"
-import { useTheme } from "next-themes"
 import Link from "next/link"
 
 const menuItems = [

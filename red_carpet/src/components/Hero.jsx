@@ -8,7 +8,7 @@ const Hero = () => {
   };
   return (
     <>
-      <div className=" flex mt-4  items-center">
+      <div className=" flex mt-4 mb-4 items-center">
         <BlurText
           text="Your Voice,Your Vote,Your Power!"
           delay={150}
