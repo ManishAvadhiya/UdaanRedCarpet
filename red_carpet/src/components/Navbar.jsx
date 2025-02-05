@@ -19,7 +19,7 @@ export default function Navbar() {
   return (
     <div className="relative   w-full bg-black text-white">
    {/* Top Navigation */}
-      <header className="relative z-20 flex items-center justify-between px-4 py-3">
+      <header className="relative z-20 flex items-center justify-between pl-4  py-3">
       <h1 className="text-3xl">logo</h1>
         <div className="flex items-center gap-4">
           <button onClick={() => setIsOpen(true)} className="rounded-full z-50  bg-orange-500 px-6 py-2 font-medium">

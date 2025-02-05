@@ -30,7 +30,7 @@ const FooterCopyright = () => {
         Udaan
       </h1>
       <p className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl 2xl:text-2xl mt-4 sm:mt-0 text-gray-400">
-        © 2025 design by Narendra Mali  & <br/>
+        © 2025 design by Narendra Mali  & 
          Manish Avadhiya
       </p>
     </div>
