@@ -13,7 +13,7 @@ import Image from "next/image";
 
 const Navbar = () => {
   return (
-    <div className="flex justify-between items-center p-4">
+    <div className="flex w-[95vw] justify-between items-center p-2">
       <div>
         <Image src="/logo.png" alt="logo" width={50} height={50} />
       </div>
