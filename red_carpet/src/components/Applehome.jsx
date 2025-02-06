@@ -10,8 +10,11 @@ import {
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import React, { useState } from "react";
-import { Carousel, Card } from "@/components/ui/apple-cards-carousel";
+import { motion } from "framer-motion";
+
+import React, { useContext, useRef, useState } from "react";
+import { BlurImage, Carousel, CarouselContext } from "@/components/ui/apple-cards-carousel";
+import { redirect } from "next/navigation";
 
 export function AppleCardsCarouselDemo2() {
     const [data, setData] = useState([
@@ -48,37 +51,53 @@ export function AppleCardsCarouselDemo2() {
     ]);
 
     const cards = data.map((card, index) => (
-        <Card key={card.src} card={card} index={index}  />
+        <Card key={card.src} card={card} index={index} onclick={()=>redirect("/vote")}  />
     ));
 
     return (
         <div className="w-full h-full py-20 flex flex-col justify-center items-center">
-            <h2 className="max-w-7xl pl-4 mx-auto text-4xl md:text-5xl font-bold font-sans">
-                Get to know your iSad.
-            </h2>
+           
 
             <Carousel items={cards} />
 
-            <div className="flex justify-center items-center m-4">
-                <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                        <Button variant="outline" className="text-white bg-green-700 border-neutral-500">
-                            Submit
-                        </Button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent className="w-10/12 rounded-md">
-                        <AlertDialogHeader>
-                            <AlertDialogTitle className="text-black">Are you absolutely sure?</AlertDialogTitle>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                            <AlertDialogCancel className="text-black">Cancel</AlertDialogCancel>
-                            <AlertDialogAction>Continue</AlertDialogAction>
-                        </AlertDialogFooter>
-                    </AlertDialogContent>
-                </AlertDialog>
-            </div>
+            
         </div>
     );
 }
-
+export const Card = ({
+    card,
+    index,
+    layout = false
+  }) => {
+    
+  
+    return (<>
+     
+      <motion.button
+        layoutId={layout ? `card-${card.title}` : undefined}
+        onClick={()=>redirect("/vote")}
+        className="rounded-3xl bg-gray-100 dark:bg-neutral-900 h-80 w-[90vw] md:h-[40rem] lg:w-[1000px] overflow-hidden flex flex-col items-start justify-start relative z-10">
+        <div
+          className="absolute h-full top-0 inset-x-0 bg-gradient-to-b from-black/50 via-transparent to-transparent z-30 pointer-events-none" />
+        <div className="relative z-40 p-8">
+          <motion.p
+            layoutId={layout ? `category-${card.category}` : undefined}
+            className="text-white text-sm md:text-base font-medium font-sans text-left">
+            {card.category}
+          </motion.p>
+          <motion.p
+            layoutId={layout ? `title-${card.title}` : undefined}
+            className="text-white text-xl md:text-3xl font-semibold max-w-xs text-left [text-wrap:balance] font-sans mt-2">
+            {card.title}
+          </motion.p>
+        </div>
+        <BlurImage
+          src={card.src}
+          alt={card.title}
+          fill
+          className="object-cover absolute z-10 inset-0" />
+      </motion.button>
+    </>);
+  };
+  
 export default AppleCardsCarouselDemo2;

@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Home, Plus, MoreVertical, Search } from "lucide-react";
 import Link from "next/link";
 import SplitText from "../../components/SplitText";
+import { redirect } from "next/navigation";
 
 const menuItems = [
   { title: "LOGIN", href: "/login" },
@@ -22,7 +23,7 @@ export default function Navbar() {
     <div className="relative   w-full bg-black text-white">
       {/* Top Navigation */}
       <header className="relative z-20 flex items-center justify-between pl-4  py-3">
-        <h1 className="text-3xl">
+        <h1 className="text-3xl hover:cursor-pointer" onClick={()=>redirect("/")}>
        
           Udaan'25
         </h1>
