@@ -6,7 +6,7 @@ export default function CardDemo({ nominee }) {
   const router = useRouter()
 
   return (
-    <div className="max-w-xs w-full sm:max-w-md" onClick={() => router.push("/")}>
+    <div className="max-w-xs w-full sm:max-w-md" >
       <div
         className={cn(
           "group w-full cursor-pointer overflow-hidden relative card h-96 rounded-[1.75rem] shadow-xl mx-auto flex flex-col justify-end p-4 bg-white dark:bg-slate-900 text-black dark:text-white",

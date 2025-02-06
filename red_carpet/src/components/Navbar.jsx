@@ -1,27 +1,36 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import { motion, AnimatePresence } from "framer-motion"
-import { Home, Plus, MoreVertical, Search } from "lucide-react"
-import Link from "next/link"
+import * as React from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Home, Plus, MoreVertical, Search } from "lucide-react";
+import Link from "next/link";
+import SplitText from "../../components/SplitText";
 
 const menuItems = [
   { title: "LOGIN", href: "/login" },
   { title: "VOTE", href: "/vote" },
   { title: "PROFILE", href: "/profile" },
   { title: "RESULT", href: "/result" },
-]
+];
 
 export default function Navbar() {
-  const [isOpen, setIsOpen] = React.useState(false)
-
+  const [isOpen, setIsOpen] = React.useState(false);
+  const handleAnimationComplete = () => {
+    console.log('All letters have animated!');
+  };
   return (
     <div className="relative   w-full bg-black text-white">
-   {/* Top Navigation */}
+      {/* Top Navigation */}
       <header className="relative z-20 flex items-center justify-between pl-4  py-3">
-      <h1 className="text-3xl">logo</h1>
+        <h1 className="text-3xl">
+       
+          Udaan'25
+        </h1>
         <div className="flex items-center gap-4">
-          <button onClick={() => setIsOpen(true)} className="rounded-full z-50  bg-orange-500 px-6 py-2 font-medium">
+          <button
+            onClick={() => setIsOpen(true)}
+            className="rounded-full z-50  bg-orange-500 px-7 py-2 mr-2    font-medium"
+          >
             MENU
           </button>
         </div>
@@ -39,7 +48,10 @@ export default function Navbar() {
           >
             <div className="flex h-full flex-col p-6">
               <div className="flex justify-end">
-                <button onClick={() => setIsOpen(false)} className="rounded-full font-bold  bg-orange-500 px-6 py-2 absolute top-1 right-2 ">
+                <button
+                  onClick={() => setIsOpen(false)}
+                  className="rounded-full font-bold  bg-orange-500 px-6 py-2 absolute top-1 right-2 "
+                >
                   CLOSE
                 </button>
               </div>
@@ -62,12 +74,10 @@ export default function Navbar() {
                   </motion.div>
                 ))}
               </nav>
-              
             </div>
           </motion.div>
         )}
       </AnimatePresence>
     </div>
-  )
+  );
 }
-
