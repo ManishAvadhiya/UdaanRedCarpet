@@ -180,12 +180,12 @@ export const Card = ({
             <motion.p
               layoutId={layout ? `category-${card.title}` : undefined}
               className="text-base font-medium text-black dark:text-white">
-              {card.category}
+              {card.title}
             </motion.p>
             <motion.p
               layoutId={layout ? `title-${card.title}` : undefined}
               className="text-2xl md:text-5xl font-semibold text-neutral-700 mt-4 dark:text-white">
-              {card.title}
+              {card.category}
             </motion.p>
             <div className="py-10">{card.content}</div>
           </motion.div>
@@ -199,14 +199,15 @@ export const Card = ({
       <div
         className="absolute h-full top-0 inset-x-0 bg-gradient-to-b from-black/50 via-transparent to-transparent z-30 pointer-events-none" />
       <div className="relative z-40 p-8">
+        
         <motion.p
-          layoutId={layout ? `category-${card.category}` : undefined}
-          className="text-white text-sm md:text-base font-medium font-sans text-left">
+          layoutId={layout ? `title-${card.title}` : undefined}
+          className="text-white text-2xl md:text-3xl font-semibold max-w-xs text-left [text-wrap:balance] font-sans mt-1">
           {card.category}
         </motion.p>
         <motion.p
-          layoutId={layout ? `title-${card.title}` : undefined}
-          className="text-white text-xl md:text-3xl font-semibold max-w-xs text-left [text-wrap:balance] font-sans mt-2">
+          layoutId={layout ? `category-${card.category}` : undefined}
+          className="text-white text-xs md:text-base font-medium font-sans text-left">
           {card.title}
         </motion.p>
       </div>

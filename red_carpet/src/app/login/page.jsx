@@ -1,11 +1,19 @@
 "use client";
+<<<<<<< HEAD
 import { redirect, useRouter } from "next/navigation";
+=======
+import { useRouter } from "next/navigation"; // Use useRouter instead of redirect
+>>>>>>> fbf3f9d (almost done)
 import { useState } from "react";
 import { toast } from "react-hot-toast";
 
 const SignupForm = () => {
+<<<<<<< HEAD
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+=======
+  const router = useRouter(); // Initialize router for navigation
+>>>>>>> fbf3f9d (almost done)
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -31,12 +39,20 @@ const SignupForm = () => {
       if (res.ok) {
         toast.success("Signup Successful!");
         setFormData({ email: "", password: "", clgId: "" }); // Reset form
+<<<<<<< HEAD
         setTimeout(() => router.push("/"), 500); // Redirect after delay
+=======
+        router.push("/"); // Redirect to login page correctly
+>>>>>>> fbf3f9d (almost done)
       } else {
         const errorMessage = await res.text();
         toast.error(`Error: ${errorMessage}`);
       }
 
+<<<<<<< HEAD
+=======
+      console.log("Form Submitted:", formData);
+>>>>>>> fbf3f9d (almost done)
     } catch (error) {
       console.error("Signup failed:", error);
       toast.error("Something went wrong! Please try again.");

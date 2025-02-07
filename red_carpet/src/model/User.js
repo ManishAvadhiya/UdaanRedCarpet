@@ -15,6 +15,7 @@ const UserSchema = new mongoose.Schema({
   });
   
   const NomineeSchema = new mongoose.Schema({
+    id: { type: Number, required: true, unique: true },
     name: { type: String, required: true },
     position: { type: mongoose.Schema.Types.ObjectId, ref: "Position" },
     votes: { type: Number, default: 0 },
