@@ -1,5 +1,6 @@
 import { User } from "@/model/User";
 import connectDB from "@/lib/db";
+import bcrypt from "bcryptjs"; // Secure password hashing
 
 export async function POST(req) {
   try {
@@ -14,23 +15,37 @@ export async function POST(req) {
       );
     }
 
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return new Response(JSON.stringify({ error: "Invalid email format!" }), {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
     // Connect to the database
     await connectDB();
 
     // Check if user already exists
     const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return new Response(
-        JSON.stringify({ error: "User already exists!" }),
-        { status: 409, headers: { "Content-Type": "application/json" } }
-      );
+    const existingUserById = await User.findOne({ clgId });
+    if (existingUser || existingUserById) {
+      return new Response(JSON.stringify({ error: "User already exists!" }), {
+        status: 409,
+        headers: { "Content-Type": "application/json" },
+      });
     }
+
+    // Hash the password before saving
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
 
     // Create new user
     const newUser = new User({
       email,
-      password, // ⚠️ Password is stored as plain text (not secure)
-      clgId
+      password: hashedPassword, // Store hashed password securely
+      clgId,
     });
 
     await newUser.save();
@@ -39,16 +54,15 @@ export async function POST(req) {
     return new Response(
       JSON.stringify({
         message: "User registered successfully!",
-        user: { id: newUser._id, email: newUser.email, clgId: newUser.clgId }
+        user: { id: newUser._id, email: newUser.email, clgId: newUser.clgId },
       }),
       { status: 201, headers: { "Content-Type": "application/json" } }
     );
-
   } catch (error) {
     console.error("Error:", error);
-    return new Response(
-      JSON.stringify({ error: "Something went wrong!" }),
-      { status: 500, headers: { "Content-Type": "application/json" } }
-    );
+    return new Response(JSON.stringify({ error: "Internal Server Error" }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" },
+    });
   }
 }

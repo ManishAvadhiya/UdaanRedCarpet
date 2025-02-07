@@ -1,8 +1,11 @@
 "use client";
-import { redirect } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import { useState } from "react";
+import { toast } from "react-hot-toast";
 
 const SignupForm = () => {
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -10,84 +13,97 @@ const SignupForm = () => {
   });
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
     try {
       const res = await fetch("/api/auth", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
 
       if (res.ok) {
-        alert("Vote Cast Successfully!");
+        toast.success("Signup Successful!");
         setFormData({ email: "", password: "", clgId: "" }); // Reset form
+        setTimeout(() => router.push("/"), 500); // Redirect after delay
       } else {
         const errorMessage = await res.text();
-        alert(`Error: ${errorMessage}`);
+        toast.error(`Error: ${errorMessage}`);
       }
 
-      console.log("Form Submitted:", formData);
-      redirect("/login");
     } catch (error) {
       console.error("Signup failed:", error);
-      alert("Something went wrong! Please try again.");
+      toast.error("Something went wrong! Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="flex justify-center text-black items-center h-screen bg-gray-100">
+    <div className="flex justify-center items-center h-screen text-white">
       <form 
         onSubmit={handleSubmit} 
-        className="bg-white p-6 rounded-lg shadow-md w-96"
+        className="bg-neutral-900 p-6 flex flex-col justify-center items-center rounded-lg shadow-md w-96"
       >
         <h2 className="text-xl font-bold mb-4">Signup Form</h2>
         
         {/* Email Field */}
-        <label className="block mb-2">Email</label>
-        <input 
-          type="email" 
-          name="email" 
-          value={formData.email} 
-          onChange={handleChange} 
-          className="w-full p-2 border rounded mb-3"
-          required
-        />
+        <label className="block mb-2 w-full">
+          Email
+          <input 
+            type="email" 
+            name="email" 
+            value={formData.email} 
+            onChange={handleChange} 
+            placeholder="Enter your email address"
+            className="w-full p-2 border border-gray-500 rounded mb-3 bg-transparent text-white focus:outline-none focus:border-orange-500"
+            required
+          />
+        </label>
 
         {/* Password Field */}
-        <label className="block mb-2">Password</label>
-        <input 
-          type="password" 
-          name="password" 
-          value={formData.password} 
-          onChange={handleChange} 
-          className="w-full p-2 border rounded mb-3"
-          required
-        />
+        <label className="block mb-2 w-full">
+          Password
+          <input 
+            type="password" 
+            name="password" 
+            value={formData.password} 
+            onChange={handleChange} 
+            placeholder="Enter your password"
+            className="w-full p-2 border border-gray-500 rounded mb-3 bg-transparent text-white focus:outline-none focus:border-orange-500"
+            required
+          />
+        </label>
 
         {/* College ID Field */}
-        <label className="block mb-2">College ID</label>
-        <input 
-          type="text" 
-          name="clgId" 
-          value={formData.clgId} 
-          onChange={handleChange} 
-          className="w-full p-2 border rounded mb-3"
-          required
-        />
+        <label className="block mb-2 w-full">
+          College ID
+          <input 
+            type="text" 
+            name="clgId" 
+            value={formData.clgId} 
+            onChange={handleChange} 
+            placeholder="Enter your college ID"
+            className="w-full p-2 border border-gray-500 rounded mb-3 bg-transparent text-white focus:outline-none focus:border-orange-500"
+            required
+          />
+        </label>
 
         {/* Submit Button */}
         <button 
           type="submit" 
-          className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
+          disabled={loading}
+          className={`w-[70%] bg-orange-500 text-white p-2 rounded-full hover:bg-orange-600 transition ${
+            loading && "opacity-50 cursor-not-allowed"
+          }`}
         >
-          Signup
+          {loading ? "Loading..." : "Signup"}
         </button>
       </form>
     </div>
