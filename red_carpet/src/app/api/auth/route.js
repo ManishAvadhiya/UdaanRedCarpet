@@ -52,7 +52,7 @@ export async function POST(req) {
     return new Response(
       JSON.stringify({
         message: "User registered successfully!",
-        user: { id: newUser._id, email: newUser.email, clgId: newUser.clgId },
+        user: { id: newUser._id, email: newUser.email },
       }),
       { status: 201, headers: { "Content-Type": "application/json" } }
     );
