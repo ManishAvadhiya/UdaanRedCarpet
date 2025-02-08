@@ -1,71 +1,66 @@
-import { Nominee, User } from "@/model/User"; // Keeping your original import
+import { Nominee, User } from "@/model/User";
 import connectDB from "@/lib/db";
 
 export async function POST(req) {
   try {
-    // Parse request body safely
     const body = await req.json();
 
-    if (!body || !body.actualvalues || !Array.isArray(body.actualvalues)) {
+    // Validation
+    if (!body?.actualvalues?.length === 9 || !body?.email) {
       return new Response(
-        JSON.stringify({ error: "Invalid request body!" }),
-        { status: 400, headers: { "Content-Type": "application/json" } }
-      );
-    }
-
-    const { actualvalues, email } = body;
-
-    if (actualvalues.length !== 9) {
-      return new Response(
-        JSON.stringify({ error: "Please vote in every category!" }),
-        { status: 400, headers: { "Content-Type": "application/json" } }
+        JSON.stringify({ error: "Invalid request format!" }),
+        { status: 400 }
       );
     }
 
     await connectDB();
 
-    // Check if the user has already voted
-    const user = await User.findOne({ email });
+    const { actualvalues, email } = body;
 
-    if (!user) {
-      const newUser = new User({
-        email,
-        
-      });
-  
-      await newUser.save();
-    }
+    // Atomic operation: Find or create user
+    let user = await User.findOneAndUpdate(
+      { email },
+      { $setOnInsert: { email, isVoted: false } }, // Initial values
+      { 
+        new: true,
+        upsert: true, // Create if doesn't exist
+        runValidators: true 
+      }
+    );
 
+    // Check voting status
     if (user.isVoted) {
       return new Response(
-        JSON.stringify({ error: "You have already voted!" }),
-        { status: 403, headers: { "Content-Type": "application/json" } }
+        JSON.stringify({ error: "Already voted!" }),
+        { status: 403 }
       );
     }
 
-    // Update user as voted
-    await User.findOneAndUpdate(
-      { email },
-      { isVoted: true },
-      { new: true }
-    );
-
-    // Increment votes for selected nominees
-    await Nominee.updateMany(
-      { id: { $in: actualvalues } },
-      { $inc: { votes: 1 } }
-    );
+    // Atomic vote recording
+    const [voteUpdate, userUpdate] = await Promise.all([
+      Nominee.updateMany(
+        { id: { $in: actualvalues } },
+        { $inc: { votes: 1 } }
+      ),
+      User.updateOne(
+        { email },
+        { $set: { isVoted: true } }
+      )
+    ]);
 
     return new Response(
-      JSON.stringify({ message: "Votes recorded successfully!" }),
-      { status: 200, headers: { "Content-Type": "application/json" } }
+      JSON.stringify({ message: "Vote recorded!" }),
+      { status: 200 }
     );
 
   } catch (error) {
-    console.error("Error:", error);
+    console.error("Voting Error:", error);
     return new Response(
-      JSON.stringify({ error: "Something went wrong!" }),
-      { status: 500, headers: { "Content-Type": "application/json" } }
+      JSON.stringify({ 
+        error: error.message || "Voting failed",
+        details: error.errors 
+      }),
+      { status: 500 }
     );
   }
 }
