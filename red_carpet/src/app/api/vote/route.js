@@ -1,31 +1,21 @@
-import { getAuth } from "@clerk/nextjs/server";
-import { Nominee } from "@/model/Nominee";
-import { User } from "@/model/User"; // Import User model
+import { Nominee, User } from "@/model/User"; // Keeping your original import
 import connectDB from "@/lib/db";
 
 export async function POST(req) {
   try {
-    const { actualvalues } = await req.json();
-    
-    // Securely get Clerk user data
-    const auth = getAuth(req);
-    if (!auth.userId) {
-      return new Response(
-        JSON.stringify({ error: "Unauthorized" }),
-        { status: 401, headers: { "Content-Type": "application/json" } }
-      );
-    }
+    // Parse request body safely
+    const body = await req.json();
 
-    // Get user email from Clerk
-    const email = auth.sessionClaims?.email;
-    if (!email) {
+    if (!body || !body.actualvalues || !Array.isArray(body.actualvalues)) {
       return new Response(
-        JSON.stringify({ error: "User email not found!" }),
+        JSON.stringify({ error: "Invalid request body!" }),
         { status: 400, headers: { "Content-Type": "application/json" } }
       );
     }
 
-    if (!Array.isArray(actualvalues) || actualvalues.length !== 9) {
+    const { actualvalues, email } = body;
+
+    if (actualvalues.length !== 9) {
       return new Response(
         JSON.stringify({ error: "Please vote in every category!" }),
         { status: 400, headers: { "Content-Type": "application/json" } }
@@ -34,28 +24,38 @@ export async function POST(req) {
 
     await connectDB();
 
+    // Check if the user has already voted
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return new Response(
+        JSON.stringify({ error: "User not found!" }),
+        { status: 404, headers: { "Content-Type": "application/json" } }
+      );
+    }
+
+    if (user.isVoted) {
+      return new Response(
+        JSON.stringify({ error: "You have already voted!" }),
+        { status: 403, headers: { "Content-Type": "application/json" } }
+      );
+    }
+
+    // Update user as voted
+    await User.findOneAndUpdate(
+      { email },
+      { isVoted: true },
+      { new: true }
+    );
+
     // Increment votes for selected nominees
     await Nominee.updateMany(
       { id: { $in: actualvalues } },
       { $inc: { votes: 1 } }
     );
 
-    // Update user's isVoted status to true
-    const updatedUser = await User.findOneAndUpdate(
-      { email }, // Find user by email
-      { isVoted: true }, // Set isVoted to true
-      { new: true } // Return updated document
-    );
-
-    if (!updatedUser) {
-      return new Response(
-        JSON.stringify({ error: "User not found in the database!" }),
-        { status: 404, headers: { "Content-Type": "application/json" } }
-      );
-    }
-
     return new Response(
-      JSON.stringify({ message: "Votes recorded successfully!", email }),
+      JSON.stringify({ message: "Votes recorded successfully!" }),
       { status: 200, headers: { "Content-Type": "application/json" } }
     );
 

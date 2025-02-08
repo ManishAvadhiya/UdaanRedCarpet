@@ -145,16 +145,17 @@ export function AppleCardsCarouselDemo() {
   const actualvalues = selectedIds.filter(item => item !== null);
   
   const handleSubmit = async  ()=>{
+    const email = user.primaryEmailAddress?.emailAddress; // Get user email
 
-    if (actualvalues.length < 9){
-      toast.error('Please vote for all categories')
-      return ;
+    if (actualvalues.length !== 9){
+      return toast.error('Please vote for all categories')
+       
     }
     try {
       const res = await fetch("/api/vote", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(actualvalues),
+        body: JSON.stringify({actualvalues,email}),
       });
 
       if (res.ok) {
@@ -163,7 +164,7 @@ export function AppleCardsCarouselDemo() {
         
       } else {
         const errorMessage = await res.text();
-        toast.error(`Error: ${errorMessage}`);
+        toast.error(`${errorMessage}`);
       }
     } catch (error) {
       console.error("Voting failed:", error);

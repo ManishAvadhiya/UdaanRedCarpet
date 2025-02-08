@@ -1,6 +1,12 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { ClerkProvider, SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
+import {
+  ClerkProvider,
+  SignedIn,
+  SignedOut,
+  SignInButton,
+  UserButton,
+} from "@clerk/nextjs";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Toaster } from "react-hot-toast";
@@ -21,23 +27,20 @@ export const metadata = {
 };
 
 export default function RootLayout({ children }) {
+  
   return (
     <ClerkProvider frontendApi={process.env.NEXT_PUBLIC_CLERK_FRONTEND_API}>
-    <html lang="en">
-      <body>
-
-        <Navbar />
-        <Toaster position="top-center" />
-        <SignedOut>
-          <SignInButton forceRedirectUrl="/login"></SignInButton>
-        </SignedOut>
-        <SignedIn>
-          <UserButton />
-        </SignedIn>
-        {children}
-        <Footer />
-      </body>
-    </html>
-  </ClerkProvider>
+      <html lang="en">
+        <body>
+          <Navbar />
+          <Toaster position="top-center" />
+          <SignedIn>
+            <UserButton />
+          </SignedIn>
+          {children}
+          <Footer />
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }

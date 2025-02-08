@@ -2,8 +2,8 @@ import mongoose from "mongoose"
 
 const UserSchema = new mongoose.Schema({
     email: { type: String, required: true, unique: true },
-    password: { type: String, required: true },
-    clgId: { type: String, required: true, unique: true },
+    // password: { type: String, required: true },
+    // clgId: { type: String, required: true, unique: true },
     isAdmin: { type: Boolean, default: false },
     isSuperAdmin:{ type: Boolean, default: false },
     isVoted:{ type: Boolean, default: false },

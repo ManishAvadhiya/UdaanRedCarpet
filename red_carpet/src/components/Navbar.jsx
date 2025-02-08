@@ -6,11 +6,13 @@ import { Home, Plus, MoreVertical, Search } from "lucide-react";
 import Link from "next/link";
 import SplitText from "../../components/SplitText";
 import { redirect } from "next/navigation";
-
+const handleLogin = () => {
+  redirectToSignIn(); // Redirects the user to the Clerk sign-in page
+};
 const menuItems = [
-  { title: "LOGIN", href: "/login" },
+  // { title: "LOGIN", href: "/login"},
   { title: "VOTE", href: "/vote" },
-  { title: "PROFILE", href: "/profile" },
+  // { title: "PROFILE", href: "/profile" },
   { title: "RESULT", href: "/result" },
 ];
 
@@ -20,7 +22,7 @@ export default function Navbar() {
     console.log('All letters have animated!');
   };
   return (
-    <div className="relative   w-full bg-black text-white">
+    <div className="relative mt-2  w-full bg-black text-white">
       {/* Top Navigation */}
       <header className="relative z-20 flex items-center justify-between pl-4  py-3">
         <h1 className="text-3xl hover:cursor-pointer" onClick={()=>redirect("/")}>
@@ -51,7 +53,7 @@ export default function Navbar() {
               <div className="flex justify-end">
                 <button
                   onClick={() => setIsOpen(false)}
-                  className="rounded-full font-bold  bg-orange-500 px-6 py-2 absolute top-1 right-2 "
+                  className="rounded-full font-bold  bg-orange-500 px-6 py-2 absolute top-3 right-2 "
                 >
                   CLOSE
                 </button>

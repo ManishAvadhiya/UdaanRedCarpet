@@ -5,10 +5,10 @@ import bcrypt from "bcryptjs"; // Secure password hashing
 export async function POST(req) {
   try {
     // Parse request body
-    const { email, password, clgId } = await req.json();
+    const { email } = await req.json();
 
     // Validate required fields
-    if (!email || !password || !clgId) {
+    if (!email ) {
       return new Response(
         JSON.stringify({ error: "All fields are required!" }),
         { status: 400, headers: { "Content-Type": "application/json" } }
@@ -29,8 +29,8 @@ export async function POST(req) {
 
     // Check if user already exists
     const existingUser = await User.findOne({ email });
-    const existingUserById = await User.findOne({ clgId });
-    if (existingUser || existingUserById) {
+    
+    if (existingUser ) {
       return new Response(JSON.stringify({ error: "User already exists!" }), {
         status: 409,
         headers: { "Content-Type": "application/json" },
@@ -38,14 +38,12 @@ export async function POST(req) {
     }
 
     // Hash the password before saving
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
+    
 
     // Create new user
     const newUser = new User({
       email,
-      password: hashedPassword, // Store hashed password securely
-      clgId,
+      
     });
 
     await newUser.save();

@@ -14,10 +14,10 @@ const Hero = () => {
           delay={150}
           animateBy="words"
           direction="top"
-          className="text-2xl mx-8"
+          className="text-2xl mx-8 font-bold text-orange-500"
         />
       </div>
-      <Card />
+      {/* <Card /> */}
       
     </>
   );

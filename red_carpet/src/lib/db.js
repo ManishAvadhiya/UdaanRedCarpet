@@ -4,7 +4,7 @@ dotenv.config();
 
 const MONGODB_URI = process.env.DATABASE_URL;
 
-if (!MONGODB_URI) {
+if (!process.env.DATABASE_URL) {
   throw new Error("Please define the DATABASE_URL environment variable ");
 }
 
