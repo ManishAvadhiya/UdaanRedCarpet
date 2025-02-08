@@ -28,10 +28,12 @@ export async function POST(req) {
     const user = await User.findOne({ email });
 
     if (!user) {
-      return new Response(
-        JSON.stringify({ error: "User not found!" }),
-        { status: 404, headers: { "Content-Type": "application/json" } }
-      );
+      const newUser = new User({
+        email,
+        
+      });
+  
+      await newUser.save();
     }
 
     if (user.isVoted) {
