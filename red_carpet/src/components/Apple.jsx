@@ -14,6 +14,8 @@ import {
 import Image from "next/image";
 import React, { useState } from "react";
 import { Carousel, Card } from "@/components/ui/apple-cards-carousel";
+import toast from "react-hot-toast";
+import { useUser } from "@clerk/nextjs";
 
 export function AppleCardsCarouselDemo() {
   const [data, setData] = useState([
@@ -138,10 +140,36 @@ export function AppleCardsCarouselDemo() {
       ]
     }
   ]);
-
+  const { user } = useUser();
   const selectedIds = data.map(item => item.selected_nominee_id);
+  const actualvalues = selectedIds.filter(item => item !== null);
   
-  
+  const handleSubmit = async  ()=>{
+
+    if (actualvalues.length < 9){
+      toast.error('Please vote for all categories')
+      return ;
+    }
+    try {
+      const res = await fetch("/api/vote", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(actualvalues),
+      });
+
+      if (res.ok) {
+        toast.success("Voted Successful!");
+         
+        
+      } else {
+        const errorMessage = await res.text();
+        toast.error(`Error: ${errorMessage}`);
+      }
+    } catch (error) {
+      console.error("Voting failed:", error);
+      toast.error("Something went wrong! Please try again.");
+    }
+  }
   
 
   const updateImageSrc = (index, newSrc) => {
@@ -176,7 +204,7 @@ export function AppleCardsCarouselDemo() {
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel className="text-black">Cancel</AlertDialogCancel>
-          <AlertDialogAction >Continue</AlertDialogAction>
+          <AlertDialogAction onClick={handleSubmit} >Continue</AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

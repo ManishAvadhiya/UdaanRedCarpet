@@ -1,47 +1,62 @@
-import { User } from "@/model/User";
+import { getAuth } from "@clerk/nextjs/server";
+import { Nominee } from "@/model/Nominee";
+import { User } from "@/model/User"; // Import User model
 import connectDB from "@/lib/db";
 
 export async function POST(req) {
   try {
-    // Parse request body
-    const { selectedIds } = await req.json();
+    const { actualvalues } = await req.json();
+    
+    // Securely get Clerk user data
+    const auth = getAuth(req);
+    if (!auth.userId) {
+      return new Response(
+        JSON.stringify({ error: "Unauthorized" }),
+        { status: 401, headers: { "Content-Type": "application/json" } }
+      );
+    }
 
-    // Validate required fields
-    if (selectedIds.length != 9) {
+    // Get user email from Clerk
+    const email = auth.sessionClaims?.email;
+    if (!email) {
+      return new Response(
+        JSON.stringify({ error: "User email not found!" }),
+        { status: 400, headers: { "Content-Type": "application/json" } }
+      );
+    }
+
+    if (!Array.isArray(actualvalues) || actualvalues.length !== 9) {
       return new Response(
         JSON.stringify({ error: "Please vote in every category!" }),
         { status: 400, headers: { "Content-Type": "application/json" } }
       );
     }
 
-    // Connect to the database
     await connectDB();
 
-    // Check if user already exists
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
+    // Increment votes for selected nominees
+    await Nominee.updateMany(
+      { id: { $in: actualvalues } },
+      { $inc: { votes: 1 } }
+    );
+
+    // Update user's isVoted status to true
+    const updatedUser = await User.findOneAndUpdate(
+      { email }, // Find user by email
+      { isVoted: true }, // Set isVoted to true
+      { new: true } // Return updated document
+    );
+
+    if (!updatedUser) {
       return new Response(
-        JSON.stringify({ error: "User already exists!" }),
-        { status: 409, headers: { "Content-Type": "application/json" } }
+        JSON.stringify({ error: "User not found in the database!" }),
+        { status: 404, headers: { "Content-Type": "application/json" } }
       );
     }
 
-    // Create new user
-    const newUser = new User({
-      email,
-      password, // ⚠️ Password is stored as plain text (not secure)
-      clgId
-    });
-
-    await newUser.save();
-
-    // Return success response
     return new Response(
-      JSON.stringify({
-        message: "User registered successfully!",
-        user: { id: newUser._id, email: newUser.email, clgId: newUser.clgId }
-      }),
-      { status: 201, headers: { "Content-Type": "application/json" } }
+      JSON.stringify({ message: "Votes recorded successfully!", email }),
+      { status: 200, headers: { "Content-Type": "application/json" } }
     );
 
   } catch (error) {

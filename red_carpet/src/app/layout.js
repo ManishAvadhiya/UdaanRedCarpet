@@ -22,18 +22,18 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <ClerkProvider>
+    <ClerkProvider frontendApi={process.env.NEXT_PUBLIC_CLERK_FRONTEND_API}>
     <html lang="en">
       <body>
 
         <Navbar />
         <Toaster position="top-center" />
-        {/* <SignedOut>
-          <SignInButton forceRedirectUrl="/signup"/>
+        <SignedOut>
+          <SignInButton forceRedirectUrl="/login"></SignInButton>
         </SignedOut>
         <SignedIn>
           <UserButton />
-        </SignedIn> */}
+        </SignedIn>
         {children}
         <Footer />
       </body>
