@@ -1,5 +1,4 @@
 "use client";
-import Card from "./Card";
 import BlurText from "./ui/BlurText";
 
 const Hero = () => {
@@ -17,8 +16,6 @@ const Hero = () => {
           className="text-2xl mx-8 font-bold text-orange-500"
         />
       </div>
-      {/* <Card /> */}
-      
     </>
   );
 };
