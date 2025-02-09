@@ -6,6 +6,7 @@ import { Home, Plus, MoreVertical, Search } from "lucide-react";
 import Link from "next/link";
 import SplitText from "../../components/SplitText";
 import { redirect } from "next/navigation";
+import { SignedIn, UserButton } from "@clerk/nextjs";
 const handleLogin = () => {
   redirectToSignIn(); // Redirects the user to the Clerk sign-in page
 };
@@ -25,10 +26,15 @@ export default function Navbar() {
     <div className="relative mt-2  w-full bg-black text-white">
       {/* Top Navigation */}
       <header className="relative z-20 flex items-center justify-between pl-4  py-3">
+        <div className="my-2 flex gap-2">
         <h1 className="text-3xl hover:cursor-pointer" onClick={()=>redirect("/")}>
-       
           Udaan'25
         </h1>
+          <SignedIn>
+            <UserButton />
+          </SignedIn>
+        </div>
+        
         <div className="flex items-center gap-4">
           <button
             onClick={() => setIsOpen(true)}
